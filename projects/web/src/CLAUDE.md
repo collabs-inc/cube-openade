@@ -124,6 +124,8 @@ Main modules: runtime (agent/process/PTY/git/files transport), shell (directory 
 
 Task execution goes through the OpenADE runtime module (`openade/turn/start`, `openade/review/start`, `openade/turn/interrupt`). Durable repo/task/comment/task-metadata mutations should also use `runtime/localOpenADEClient.ts` (`openade/repo/*`, `openade/task/*`, `openade/comment/*`) and then refresh from storage or runtime notifications. Use `getHarnessQueryManager()` only for low-level harness helpers that are not task turns, such as small JSON-constrained helpers (cron generation, config suggestions).
 
+Sidebar task ordering lives in `components/sidebar/taskSorting.ts`. Task previews, pending task-creation placeholders, and remote task lists should go through that helper so a pending task keeps the same relative position after it materializes.
+
 ## Task Lifecycle
 
 1. **Create** - User enters description, selects branch, chooses isolation strategy

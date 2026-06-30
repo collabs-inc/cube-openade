@@ -24,11 +24,49 @@ import { ScrollArea, ShortcutBadge } from "../ui"
 import { TaskDeleteConfirm } from "./TaskDeleteConfirm"
 import { resolveTaskCopyPath } from "./sidebarPathUtils"
 import { runtimeFirstTaskDisplayEvent } from "./taskRuntimeDisplay"
-import { sortTaskPreviewsLikeSidebar } from "./taskSorting"
+import { type SidebarSortableTask, sortTaskPreviewsLikeSidebar } from "./taskSorting"
 
 const NEW_TASK_SHORTCUT = "mod+n"
 const PREVIOUS_TASK_SHORTCUT_LABEL = "↑"
 const NEXT_TASK_SHORTCUT_LABEL = "↓"
+
+type SidebarTaskEntry =
+    | (SidebarSortableTask & {
+          kind: "task"
+          preview: TaskPreview
+      })
+    | (SidebarSortableTask & {
+          kind: "creation"
+          creation: TaskCreation
+      })
+
+function taskPreviewToSidebarEntry(preview: TaskPreview): SidebarTaskEntry {
+    return {
+        kind: "task",
+        id: preview.id,
+        closed: preview.closed,
+        createdAt: preview.createdAt,
+        lastEvent: preview.lastEvent,
+        preview,
+    }
+}
+
+function taskCreationToSidebarEntry(creation: TaskCreation): SidebarTaskEntry {
+    return {
+        kind: "creation",
+        id: creation.id,
+        closed: false,
+        createdAt: creation.createdAt,
+        lastEvent: {
+            type: "action",
+            status: creation.error ? "error" : "in_progress",
+            sourceType: creation.mode,
+            sourceLabel: "Creating task",
+            at: creation.createdAt,
+        },
+        creation,
+    }
+}
 
 function isPlanType(lastEvent: TaskPreviewLastEvent): boolean {
     return lastEvent.sourceType === "plan" || lastEvent.sourceType === "revise"
@@ -365,12 +403,19 @@ export const TasksSidebarContent = observer(({ workspaceId, taskId, creationId }
     const repo = codeStore.repoStore?.repos.get(workspaceId)
     const previews = repo?.tasks ?? []
     const pinnedSet = new Set(codeStore.personalSettingsStore?.settings.current.pinnedTaskIds ?? [])
-    const sortedPreviews = sortTaskPreviewsLikeSidebar(previews, {
-        pinnedTaskIds: pinnedSet,
-        runningTaskIds: codeStore.runtimes.runningTaskIds,
-    })
-    const selectedOpenIds = sortedPreviews.filter((preview) => selectedIds.has(preview.id) && !preview.closed).map((preview) => preview.id)
     const creations = codeStore.creation.getCreationsForRepo(workspaceId)
+    const runningEntryIds = new Set(codeStore.runtimes.runningTaskIds)
+    for (const creation of creations) {
+        if (!creation.error) {
+            runningEntryIds.add(creation.id)
+        }
+    }
+    const sortedEntries = sortTaskPreviewsLikeSidebar([...previews.map(taskPreviewToSidebarEntry), ...creations.map(taskCreationToSidebarEntry)], {
+        pinnedTaskIds: pinnedSet,
+        runningTaskIds: runningEntryIds,
+    })
+    const sortedPreviews = sortedEntries.flatMap((entry) => (entry.kind === "task" ? [entry.preview] : []))
+    const selectedOpenIds = sortedPreviews.filter((preview) => selectedIds.has(preview.id) && !preview.closed).map((preview) => preview.id)
 
     const navigateTaskByOffset = useCallback(
         (offset: 1 | -1) => {
@@ -407,7 +452,7 @@ export const TasksSidebarContent = observer(({ workspaceId, taskId, creationId }
         }
         window.addEventListener("keydown", handler)
         return () => window.removeEventListener("keydown", handler)
-    }, [selectionMode])
+    }, [selectionMode, exitSelectionMode])
 
     // ── Handlers ──
     const handleAddTask = () => {
@@ -541,7 +586,7 @@ export const TasksSidebarContent = observer(({ workspaceId, taskId, creationId }
 
     const selectAll = () => setSelectedIds(new Set(sortedPreviews.map((p) => p.id)))
 
-    const isEmpty = sortedPreviews.length === 0 && creations.length === 0
+    const isEmpty = sortedEntries.length === 0
 
     return (
         <div className="relative flex flex-col h-full mt-4">
@@ -606,37 +651,42 @@ export const TasksSidebarContent = observer(({ workspaceId, taskId, creationId }
                         </div>
                     ) : (
                         <>
-                            {creations.map((creation) => (
-                                <CreatingTaskItem
-                                    key={creation.id}
-                                    creation={creation}
-                                    isActive={creationId === creation.id}
-                                    onSelect={() => handleSelectCreation(creation.id)}
-                                    onCancel={() => handleCancelCreation(creation.id)}
-                                />
-                            ))}
-                            {sortedPreviews.map((preview) => (
-                                <TaskItem
-                                    key={preview.id}
-                                    preview={preview}
-                                    isActive={taskId === preview.id}
-                                    isUnread={!preview.closed && !!preview.lastEventAt && (!preview.lastViewedAt || preview.lastEventAt > preview.lastViewedAt)}
-                                    isPinned={pinnedSet.has(preview.id)}
-                                    inProgressEvent={getInProgressEventForTask(codeStore, preview)}
-                                    selectionMode={selectionMode}
-                                    isSelected={selectedIds.has(preview.id)}
-                                    onSelect={() => handleSelectTask(preview.id)}
-                                    onToggleSelect={() => toggleSelection(preview.id)}
-                                    onEnterSelect={() => enterSelectionMode(preview.id)}
-                                    onDelete={() => handleDeleteTask(preview.id)}
-                                    onToggleClosed={() => handleToggleClosed(preview.id, preview.closed ?? false)}
-                                    onTogglePinned={() => handleTogglePinned(preview.id)}
-                                    onCopyPath={() => {
-                                        void handleCopyTaskPath(preview.id)
-                                    }}
-                                    onRename={(newTitle) => handleRenameTask(preview.id, newTitle)}
-                                />
-                            ))}
+                            {sortedEntries.map((entry) =>
+                                entry.kind === "creation" ? (
+                                    <CreatingTaskItem
+                                        key={entry.creation.id}
+                                        creation={entry.creation}
+                                        isActive={creationId === entry.creation.id}
+                                        onSelect={() => handleSelectCreation(entry.creation.id)}
+                                        onCancel={() => handleCancelCreation(entry.creation.id)}
+                                    />
+                                ) : (
+                                    <TaskItem
+                                        key={entry.preview.id}
+                                        preview={entry.preview}
+                                        isActive={taskId === entry.preview.id}
+                                        isUnread={
+                                            !entry.preview.closed &&
+                                            !!entry.preview.lastEventAt &&
+                                            (!entry.preview.lastViewedAt || entry.preview.lastEventAt > entry.preview.lastViewedAt)
+                                        }
+                                        isPinned={pinnedSet.has(entry.preview.id)}
+                                        inProgressEvent={getInProgressEventForTask(codeStore, entry.preview)}
+                                        selectionMode={selectionMode}
+                                        isSelected={selectedIds.has(entry.preview.id)}
+                                        onSelect={() => handleSelectTask(entry.preview.id)}
+                                        onToggleSelect={() => toggleSelection(entry.preview.id)}
+                                        onEnterSelect={() => enterSelectionMode(entry.preview.id)}
+                                        onDelete={() => handleDeleteTask(entry.preview.id)}
+                                        onToggleClosed={() => handleToggleClosed(entry.preview.id, entry.preview.closed ?? false)}
+                                        onTogglePinned={() => handleTogglePinned(entry.preview.id)}
+                                        onCopyPath={() => {
+                                            void handleCopyTaskPath(entry.preview.id)
+                                        }}
+                                        onRename={(newTitle) => handleRenameTask(entry.preview.id, newTitle)}
+                                    />
+                                )
+                            )}
                         </>
                     )}
                     <div className="h-[50vh] flex-shrink-0" />

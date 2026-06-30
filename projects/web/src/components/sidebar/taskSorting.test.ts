@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest"
 import type { TaskPreview } from "@/persistence/repoStore"
-import { sortTaskPreviewsLikeSidebar } from "./taskSorting"
+import { describe, expect, it } from "vitest"
+import { type SidebarSortableTask, sortTaskPreviewsLikeSidebar } from "./taskSorting"
+
+interface SidebarEntry extends SidebarSortableTask {
+    kind: "task" | "creation"
+}
 
 function task(id: string, overrides: Partial<TaskPreview> = {}): TaskPreview {
     return {
@@ -39,5 +43,34 @@ describe("sortTaskPreviewsLikeSidebar", () => {
             "closed-pinned-old",
             "closed-unpinned-new",
         ])
+    })
+
+    it("sorts pending task creations like unpinned running sidebar items", () => {
+        const entries: SidebarEntry[] = [
+            {
+                kind: "creation",
+                id: "pending-creation",
+                createdAt: "2026-01-08T00:00:00.000Z",
+            },
+            {
+                kind: "task",
+                id: "open-pinned",
+                createdAt: "2026-01-01T00:00:00.000Z",
+                lastEvent: { type: "action", status: "completed", sourceLabel: "Do", at: "2026-01-03T00:00:00.000Z" },
+            },
+            {
+                kind: "task",
+                id: "open-unpinned",
+                createdAt: "2026-01-01T00:00:00.000Z",
+                lastEvent: { type: "action", status: "completed", sourceLabel: "Do", at: "2026-01-02T00:00:00.000Z" },
+            },
+        ]
+
+        const sorted = sortTaskPreviewsLikeSidebar(entries, {
+            pinnedTaskIds: ["open-pinned"],
+            runningTaskIds: ["pending-creation"],
+        })
+
+        expect(sorted.map((entry) => entry.id)).toEqual(["open-pinned", "pending-creation", "open-unpinned"])
     })
 })
