@@ -8,6 +8,17 @@ export interface ReleaseNote {
 /** Hardcoded release notes, newest first. */
 export const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: "0.81.1",
+        title: "Codex Model & Sidebar Fixes",
+        date: "2026-07-09",
+        highlights: [
+            "Codex tasks now default to GPT-5.6 Sol, with GPT-5.6 Terra and GPT-5.6 Luna available in model pickers",
+            "GPT-5.6 max reasoning now sends the expected effort value to Codex",
+            "Usage estimates now recognize GPT-5.6 Sol, Terra, and Luna pricing, including cached-token rates",
+            "Pending task-creation rows now keep their sidebar position when the task finishes materializing",
+        ],
+    },
+    {
         version: "0.81.0",
         title: "Markdown Conversation Export",
         date: "2026-06-23",
