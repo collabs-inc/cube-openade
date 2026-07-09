@@ -75,6 +75,10 @@ describe("getModelFullId", () => {
         expect(getModelFullId("gpt-5.3-codex")).toBe("gpt-5.3-codex")
     })
 
+    it("resolves GPT-5.6 alias to Sol", () => {
+        expect(getModelFullId("gpt-5.6", "codex")).toBe("gpt-5.6-sol")
+    })
+
     it("returns alias as-is for unknown values", () => {
         expect(getModelFullId("unknown-model")).toBe("unknown-model")
     })
@@ -97,8 +101,8 @@ describe("getModelsForHarness", () => {
 
     it("returns models for codex", () => {
         const models = getModelsForHarness("codex")
-        expect(models.length).toBe(4)
-        expect(models.map((m) => m.id)).toEqual(["gpt-5.5", "gpt-5.4", "gpt-5.3-codex", "gpt-5.3-codex-spark"])
+        expect(models.length).toBe(7)
+        expect(models.map((m) => m.id)).toEqual(["gpt-5.6", "gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.5", "gpt-5.4", "gpt-5.3-codex", "gpt-5.3-codex-spark"])
     })
 
     it("returns empty array for unknown harness", () => {
@@ -115,8 +119,8 @@ describe("getDefaultModelForHarness", () => {
         expect(getDefaultModelForHarness("claude-code")).toBe("opus")
     })
 
-    it("returns gpt-5.5 for codex", () => {
-        expect(getDefaultModelForHarness("codex")).toBe("gpt-5.5")
+    it("returns gpt-5.6 for codex", () => {
+        expect(getDefaultModelForHarness("codex")).toBe("gpt-5.6")
     })
 
     it("falls back to DEFAULT_MODEL for unknown harness", () => {
@@ -138,6 +142,9 @@ describe("resolveModelForHarness", () => {
         expect(resolveModelForHarness("claude-opus-4-7", "claude-code")).toBe("opus-4-7")
         expect(resolveModelForHarness("claude-opus-4-8", "claude-code")).toBe("opus-4-8")
         expect(resolveModelForHarness("claude-fable-5", "claude-code")).toBe("fable")
+        expect(resolveModelForHarness("gpt-5.6-sol", "codex")).toBe("gpt-5.6")
+        expect(resolveModelForHarness("gpt-5.6-terra", "codex")).toBe("gpt-5.6-terra")
+        expect(resolveModelForHarness("gpt-5.6-luna", "codex")).toBe("gpt-5.6-luna")
         expect(resolveModelForHarness("gpt-5.3-codex", "codex")).toBe("gpt-5.3-codex")
     })
 
@@ -152,6 +159,7 @@ describe("resolveModelForHarness", () => {
     })
 
     it("prefers the longest compatible Codex alias", () => {
+        expect(resolveModelForHarness("gpt-5.6-terra-preview", "codex")).toBe("gpt-5.6-terra")
         expect(resolveModelForHarness("gpt-5.3-codex-spark-preview", "codex")).toBe("gpt-5.3-codex-spark")
     })
 
@@ -186,6 +194,7 @@ describe("normalizeModelClass", () => {
         expect(normalizeModelClass("claude-fable-5")).toBe("Fable")
         expect(normalizeModelClass("claude-opus-4-7")).toBe("Opus")
         expect(normalizeModelClass("claude-opus-4-8")).toBe("Opus")
+        expect(normalizeModelClass("gpt-5.6-sol")).toBe("Codex")
         expect(normalizeModelClass("gpt-5.3-codex")).toBe("Codex")
         expect(normalizeModelClass("gpt-5.5")).toBe("Codex")
         expect(normalizeModelClass("gpt-5.4")).toBe("Codex")

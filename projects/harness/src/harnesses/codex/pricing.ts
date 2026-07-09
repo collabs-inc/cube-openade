@@ -18,6 +18,10 @@ export interface CodexCostOptions {
 const CODEX_PRICING: Record<string, ModelPricing> = {
     "codex-mini-latest": { standard: { inputPerMillion: 1.5, outputPerMillion: 6.0, cacheReadPerMillion: 0.375 } },
     "gpt-5-codex": { standard: { inputPerMillion: 1.25, outputPerMillion: 10.0, cacheReadPerMillion: 0.125 } },
+    "gpt-5.6": { standard: { inputPerMillion: 5.0, outputPerMillion: 30.0, cacheReadPerMillion: 0.5 } },
+    "gpt-5.6-sol": { standard: { inputPerMillion: 5.0, outputPerMillion: 30.0, cacheReadPerMillion: 0.5 } },
+    "gpt-5.6-terra": { standard: { inputPerMillion: 2.5, outputPerMillion: 15.0, cacheReadPerMillion: 0.25 } },
+    "gpt-5.6-luna": { standard: { inputPerMillion: 1.0, outputPerMillion: 6.0, cacheReadPerMillion: 0.1 } },
     "gpt-5.1-codex": { standard: { inputPerMillion: 1.25, outputPerMillion: 10.0, cacheReadPerMillion: 0.125 } },
     "gpt-5.1-codex-max": { standard: { inputPerMillion: 1.25, outputPerMillion: 10.0, cacheReadPerMillion: 0.125 } },
     "gpt-5.1-codex-mini": { standard: { inputPerMillion: 0.25, outputPerMillion: 2.0, cacheReadPerMillion: 0.025 } },
@@ -37,14 +41,14 @@ const CODEX_PRICING: Record<string, ModelPricing> = {
 }
 
 // Suffixes appended by model_reasoning_effort config — don't affect per-token pricing
-const EFFORT_SUFFIXES = ["-xhigh", "-high", "-medium", "-low"]
+const EFFORT_SUFFIXES = ["-max", "-xhigh", "-high", "-medium", "-low"]
 
 export function calculateCodexCostUsd(
     model: string | undefined,
     inputTokens: number,
     outputTokens: number,
     cacheReadTokens = 0,
-    options: CodexCostOptions = {},
+    options: CodexCostOptions = {}
 ): number | undefined {
     if (!model) return undefined
 

@@ -233,7 +233,7 @@
     semver "^7.3.5"
 
 "@openade/harness@file:../harness":
-  version "0.1.0"
+  version "0.1.1"
   resolved "file:../harness"
 
 "@opentelemetry/api-logs@0.53.0":

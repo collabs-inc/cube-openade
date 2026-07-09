@@ -36,12 +36,15 @@ export const CLAUDE_CODE_MODEL_CONFIG: HarnessModelConfig = {
 
 export const CODEX_MODEL_CONFIG: HarnessModelConfig = {
     models: [
+        { id: "gpt-5.6", fullId: "gpt-5.6-sol", label: "GPT-5.6 Sol", displayClass: "Codex", tier: "high" },
+        { id: "gpt-5.6-terra", fullId: "gpt-5.6-terra", label: "GPT-5.6 Terra", displayClass: "Codex" },
+        { id: "gpt-5.6-luna", fullId: "gpt-5.6-luna", label: "GPT-5.6 Luna", displayClass: "Codex", tier: "low" },
         { id: "gpt-5.5", fullId: "gpt-5.5", label: "GPT-5.5", displayClass: "Codex", tier: "high" },
         { id: "gpt-5.4", fullId: "gpt-5.4", label: "GPT-5.4", displayClass: "Codex" },
         { id: "gpt-5.3-codex", fullId: "gpt-5.3-codex", label: "GPT-5.3 Codex", displayClass: "Codex" },
         { id: "gpt-5.3-codex-spark", fullId: "gpt-5.3-codex-spark", label: "GPT-5.3 Codex Spark", displayClass: "Codex" },
     ],
-    defaultModel: "gpt-5.5",
+    defaultModel: "gpt-5.6",
 }
 
 export const MODEL_REGISTRY: Record<HarnessId, HarnessModelConfig> = {

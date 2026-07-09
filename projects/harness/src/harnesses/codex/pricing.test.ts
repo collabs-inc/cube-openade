@@ -2,6 +2,21 @@ import { describe, it, expect } from "vitest"
 import { calculateCodexCostUsd } from "./pricing.js"
 
 describe("calculateCodexCostUsd", () => {
+    it("returns correct cost for GPT-5.6 Sol alias", () => {
+        const cost = calculateCodexCostUsd("gpt-5.6", 1_000_000, 1_000_000)
+        expect(cost).toBeCloseTo(5.0 + 30.0)
+    })
+
+    it("returns correct cost for GPT-5.6 Terra", () => {
+        const cost = calculateCodexCostUsd("gpt-5.6-terra", 1_000_000, 1_000_000)
+        expect(cost).toBeCloseTo(2.5 + 15.0)
+    })
+
+    it("returns correct cost for GPT-5.6 Luna", () => {
+        const cost = calculateCodexCostUsd("gpt-5.6-luna", 1_000_000, 1_000_000)
+        expect(cost).toBeCloseTo(1.0 + 6.0)
+    })
+
     it("returns correct cost for exact model match", () => {
         // gpt-5.5: $5.00/M input, $30.00/M output
         const cost = calculateCodexCostUsd("gpt-5.5", 1_000_000, 1_000_000)
@@ -10,6 +25,11 @@ describe("calculateCodexCostUsd", () => {
 
     it("strips effort suffix -xhigh", () => {
         const cost = calculateCodexCostUsd("gpt-5.5-xhigh", 1_000_000, 0)
+        expect(cost).toBeCloseTo(5.0)
+    })
+
+    it("strips effort suffix -max", () => {
+        const cost = calculateCodexCostUsd("gpt-5.6-sol-max", 1_000_000, 0)
         expect(cost).toBeCloseTo(5.0)
     })
 
@@ -47,6 +67,11 @@ describe("calculateCodexCostUsd", () => {
     it("uses the current gpt-5.4 cached input rate", () => {
         const cost = calculateCodexCostUsd("gpt-5.4", 1_000_000, 0, 1_000_000)
         expect(cost).toBeCloseTo(0.25)
+    })
+
+    it("uses the current GPT-5.6 Luna cached input rate", () => {
+        const cost = calculateCodexCostUsd("gpt-5.6-luna", 1_000_000, 0, 1_000_000)
+        expect(cost).toBeCloseTo(0.1)
     })
 
     it("computes combined cost with all token types", () => {

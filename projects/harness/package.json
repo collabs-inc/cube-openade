@@ -1,6 +1,6 @@
 {
   "name": "@openade/harness",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,8 +14,14 @@
       "default": "./dist/browser.js"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "CLAUDE.md"
+  ],
   "scripts": {
     "preinstall": "yarn build 2>/dev/null || true",
+    "prepack": "yarn build",
     "build": "tsc",
     "typecheck": "tsgo --noEmit",
     "test": "NO_COLOR=1 vitest run --exclude 'src/**/*.integration.test.ts'",

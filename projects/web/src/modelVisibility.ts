@@ -15,9 +15,9 @@ export function getVisibleModelId(value: string, harnessId: HarnessId): string {
     const config = MODEL_REGISTRY[harnessId]
     if (!config) return value
 
-    const current = config.models.find((model) => model.id === value)
+    const current = config.models.find((model) => model.id === value || model.fullId === value)
     if (!current || !shouldHideModelInPicker(current, harnessId)) {
-        return value
+        return current?.id ?? value
     }
 
     const replacement = [...config.models].reverse().find((model) => model.displayClass === current.displayClass && !shouldHideModelInPicker(model, harnessId))

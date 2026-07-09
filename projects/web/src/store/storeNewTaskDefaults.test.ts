@@ -84,7 +84,7 @@ describe("CodeStore new task defaults", () => {
 
         store.setDefaultHarnessId("codex")
         expect(settingsStore.settings.current.newTaskHarnessId).toBe("codex")
-        expect(settingsStore.settings.current.newTaskModelId).toBe("gpt-5.5")
+        expect(settingsStore.settings.current.newTaskModelId).toBe("gpt-5.6")
 
         store.setDefaultModel("gpt-5.3-codex")
         expect(settingsStore.settings.current.newTaskHarnessId).toBe("codex")

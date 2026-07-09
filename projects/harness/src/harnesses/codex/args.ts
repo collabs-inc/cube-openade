@@ -21,11 +21,21 @@ export interface CodexArgBuildResult {
     cleanup: Array<{ path: string; type: "file" | "dir" }>
 }
 
-const THINKING_EFFORT_MAP: Record<string, string> = {
+type HarnessThinking = NonNullable<HarnessQuery["thinking"]>
+
+const THINKING_EFFORT_MAP: Record<HarnessThinking, string> = {
     low: "low",
     med: "medium",
     high: "high",
     max: "xhigh",
+}
+
+function resolveThinkingEffort(thinking: HarnessThinking, model: string | undefined): string {
+    if (thinking === "max" && model?.toLowerCase().startsWith("gpt-5.6")) {
+        return "max"
+    }
+
+    return THINKING_EFFORT_MAP[thinking]
 }
 
 /**
@@ -71,7 +81,7 @@ export async function buildCodexArgs(query: HarnessQuery, _config: CodexHarnessC
 
     // Thinking / reasoning effort
     if (query.thinking) {
-        const effort = THINKING_EFFORT_MAP[query.thinking]
+        const effort = resolveThinkingEffort(query.thinking, query.model)
         if (effort) {
             execArgs.push("-c", `model_reasoning_effort=${effort}`)
         }

@@ -70,6 +70,11 @@ describe("buildCodexArgs", () => {
         expect(result.args).toContain("model_reasoning_effort=xhigh")
     })
 
+    it("thinking: 'max' with GPT-5.6 → -c model_reasoning_effort=max", async () => {
+        const result = await buildCodexArgs(makeQuery({ model: "gpt-5.6-sol", thinking: "max" }), {})
+        expect(result.args).toContain("model_reasoning_effort=max")
+    })
+
     it("fastMode: true → -c service_tier fast", async () => {
         const result = await buildCodexArgs(makeQuery({ fastMode: true }), {})
         expect(result.args).toContain('service_tier="fast"')
@@ -312,10 +317,7 @@ describe("buildCodexArgs", () => {
     })
 
     it("text-only PromptPart[] produces no -i flag", async () => {
-        const result = await buildCodexArgs(
-            makeQuery({ prompt: [{ type: "text", text: "hello" }] }),
-            {}
-        )
+        const result = await buildCodexArgs(makeQuery({ prompt: [{ type: "text", text: "hello" }] }), {})
         expect(result.args).not.toContain("-i")
         expect(result.cleanup).toHaveLength(0)
     })
