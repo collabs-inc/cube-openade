@@ -65,6 +65,7 @@ describe("getModelFullId", () => {
 
     it("resolves versioned alias with harnessId", () => {
         expect(getModelFullId("opus-4-8", "claude-code")).toBe("claude-opus-4-8")
+        expect(getModelFullId("opus-5", "claude-code")).toBe("claude-opus-5")
     })
 
     it("resolves fable alias to full id", () => {
@@ -95,8 +96,8 @@ describe("getModelFullId", () => {
 describe("getModelsForHarness", () => {
     it("returns models for claude-code", () => {
         const models = getModelsForHarness("claude-code")
-        expect(models.length).toBe(7)
-        expect(models.map((m) => m.id)).toEqual(["fable", "opus-4-6", "opus-4-7", "opus-4-8", "opus", "sonnet", "haiku"])
+        expect(models.length).toBe(8)
+        expect(models.map((m) => m.id)).toEqual(["fable", "opus-4-6", "opus-4-7", "opus-4-8", "opus-5", "opus", "sonnet", "haiku"])
     })
 
     it("returns models for codex", () => {
@@ -141,6 +142,7 @@ describe("resolveModelForHarness", () => {
         expect(resolveModelForHarness("claude-opus-4-6", "claude-code")).toBe("opus-4-6")
         expect(resolveModelForHarness("claude-opus-4-7", "claude-code")).toBe("opus-4-7")
         expect(resolveModelForHarness("claude-opus-4-8", "claude-code")).toBe("opus-4-8")
+        expect(resolveModelForHarness("claude-opus-5", "claude-code")).toBe("opus-5")
         expect(resolveModelForHarness("claude-fable-5", "claude-code")).toBe("fable")
         expect(resolveModelForHarness("gpt-5.6-sol", "codex")).toBe("gpt-5.6")
         expect(resolveModelForHarness("gpt-5.6-terra", "codex")).toBe("gpt-5.6-terra")
@@ -149,13 +151,14 @@ describe("resolveModelForHarness", () => {
     })
 
     it("maps future Claude family full IDs to stable aliases", () => {
-        expect(resolveModelForHarness("claude-opus-4-9", "claude-code")).toBe("opus")
+        expect(resolveModelForHarness("claude-opus-6", "claude-code")).toBe("opus")
         expect(resolveModelForHarness("claude-sonnet-4-7-20260601", "claude-code")).toBe("sonnet")
     })
 
     it("keeps known Opus versions when the full ID grows a suffix", () => {
         expect(resolveModelForHarness("claude-opus-4-7-preview", "claude-code")).toBe("opus-4-7")
         expect(resolveModelForHarness("claude-opus-4-8-preview", "claude-code")).toBe("opus-4-8")
+        expect(resolveModelForHarness("claude-opus-5-preview", "claude-code")).toBe("opus-5")
     })
 
     it("prefers the longest compatible Codex alias", () => {
@@ -186,6 +189,7 @@ describe("normalizeModelClass", () => {
         expect(normalizeModelClass("opus")).toBe("Opus")
         expect(normalizeModelClass("opus-4-7")).toBe("Opus")
         expect(normalizeModelClass("opus-4-8")).toBe("Opus")
+        expect(normalizeModelClass("opus-5")).toBe("Opus")
         expect(normalizeModelClass("sonnet")).toBe("Sonnet")
         expect(normalizeModelClass("haiku")).toBe("Haiku")
     })
@@ -194,6 +198,7 @@ describe("normalizeModelClass", () => {
         expect(normalizeModelClass("claude-fable-5")).toBe("Fable")
         expect(normalizeModelClass("claude-opus-4-7")).toBe("Opus")
         expect(normalizeModelClass("claude-opus-4-8")).toBe("Opus")
+        expect(normalizeModelClass("claude-opus-5")).toBe("Opus")
         expect(normalizeModelClass("gpt-5.6-sol")).toBe("Codex")
         expect(normalizeModelClass("gpt-5.3-codex")).toBe("Codex")
         expect(normalizeModelClass("gpt-5.5")).toBe("Codex")

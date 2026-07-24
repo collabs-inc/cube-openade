@@ -27,6 +27,7 @@ export const CLAUDE_CODE_MODEL_CONFIG: HarnessModelConfig = {
         { id: "opus-4-6", fullId: "claude-opus-4-6", label: "Opus 4.6", displayClass: "Opus" },
         { id: "opus-4-7", fullId: "claude-opus-4-7", label: "Opus 4.7", displayClass: "Opus" },
         { id: "opus-4-8", fullId: "claude-opus-4-8", label: "Opus 4.8", displayClass: "Opus", tier: "high" },
+        { id: "opus-5", fullId: "claude-opus-5", label: "Opus 5", displayClass: "Opus", tier: "high" },
         { id: "opus", fullId: "opus", label: "Opus (latest)", displayClass: "Opus" },
         { id: "sonnet", fullId: "claude-sonnet-4-6", label: "Sonnet 4.6", displayClass: "Sonnet" },
         { id: "haiku", fullId: "claude-haiku-4-5-20251001", label: "Haiku 4.5", displayClass: "Haiku", tier: "low" },

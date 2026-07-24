@@ -136,6 +136,15 @@ describe("TaskModel harness lock", () => {
         expect(model.model).toBe("opus-4-8")
     })
 
+    it("maps persisted Opus 5 full model IDs to versioned aliases", () => {
+        const task = createTask([createActionEvent({ id: "a1", harnessId: "claude-code", modelId: "claude-opus-5" })])
+
+        const model = new TaskModel(createStore(task), task.id)
+
+        expect(model.harnessId).toBe("claude-code")
+        expect(model.model).toBe("opus-5")
+    })
+
     it("maps future Claude Sonnet full model IDs to stable aliases", () => {
         const task = createTask([createActionEvent({ id: "a1", harnessId: "claude-code", modelId: "claude-sonnet-4-7-20260601" })])
 
