@@ -8,6 +8,16 @@ export interface ReleaseNote {
 /** Hardcoded release notes, newest first. */
 export const RELEASE_NOTES: ReleaseNote[] = [
     {
+        version: "0.81.2",
+        title: "Claude Opus 5",
+        date: "2026-07-24",
+        highlights: [
+            "Claude Code now includes Claude Opus 5 as an explicit model option",
+            "Rolling Opus defaults now appear as Opus 5 in model pickers while keeping the Claude Code alias compatible",
+            "Tasks restored from Claude Opus 5 session history now normalize back to the Opus 5 picker option",
+        ],
+    },
+    {
         version: "0.81.1",
         title: "Codex Model & Sidebar Fixes",
         date: "2026-07-09",
