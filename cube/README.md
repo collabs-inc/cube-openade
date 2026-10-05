@@ -60,9 +60,11 @@ service is explicitly disabled; desktop access goes through Cube's gate.
 
 Pinned downloads total **251,737,691 bytes**: a 144 MB AppImage, 102 MB Bun binary,
 and 5.4 MB ripgrep binary. The temporary AppImage is removed after extraction.
-The extracted app and shared desktop dependencies consume additional disk;
-Linux installed size, startup time, memory usage and rendering remain to be
-measured during the coordinated cloud smoke test.
+The extracted app uses 416 MiB and its persistent profile with managed binaries
+uses 105 MiB. Linux cloud smoke rendered the native app through Cube's sandboxed
+iframe, opened Settings with pointer input, and measured 439 MiB total RSS across
+16 owned processes. A Cube restart took 8.8 seconds, retained the managed profile,
+and stopped all previous owned processes. Provider inference was not exercised.
 
 Local adapter checks (no large downloads or native app launch):
 
@@ -87,6 +89,6 @@ Electron/third-party notices remain in the extracted directory. The Cube icon
 is the existing 30 KB upstream `projects/landing/public/favicon-192.png`.
 
 The desktop bridge is vendored from `collabs-inc/cube-superset` commit
-`eb1a523b`. Its source and noVNC notices remain under `desktop/`; consult
+`b700011a`. Its source and noVNC notices remain under `desktop/`; consult
 its README before updating it. Update source revision, URLs, checksums and
 managed-binary versions together, and repeat the Linux smoke test.

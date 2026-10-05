@@ -17,9 +17,8 @@ The bridge does not inject `--no-sandbox`.
 Host prerequisites (Debian): Node 22+, curl, tar, util-linux, xvfb, openbox,
 x11vnc, websockify, dbus-x11, gnome-keyring, gcr, libsecret-1-0, libgtk-3-0,
 libnss3, libasound2, libgbm1, libxss1, libatk-bridge2.0-0, libdrm2,
-libxkbcommon0, fonts-liberation, xauth, x11-xserver-utils. dpkg-deb is needed
-by wrappers installing upstream Debian packages. xterm/x11-utils are useful
-for smoke tests but not normal operation.
+libxkbcommon0, fonts-liberation, xauth, x11-xserver-utils, x11-utils, xdotool. dpkg-deb is needed
+by wrappers installing upstream Debian packages. xterm is useful for smoke tests.
 
 The foreground Node server binds only 127.0.0.1:$PORT and accepts loopback/Cube
 app hosts. HTTP and WebSocket requests with an Origin must match the exact host
@@ -35,7 +34,9 @@ the displayed native dialog. The app's original XDG directories remain intact
 for CLI authentication; only display/keyring services use private XDG roots.
 
 The native display is 1440×900 and scales to the browser pane. Keyboard and
-pointer input pass through noVNC. The Paste control transfers browser text to
+pointer input pass through noVNC. Show app restores a minimized native window via
+a same-origin POST and targets only the owned application PID on its private display.
+The Paste control transfers browser text to
 the remote clipboard; use the native app's paste shortcut afterward. Audio,
 native file transfer and OS notifications are not forwarded. Browser links
 opened through xdg-open/BROWSER appear in a visible HTTPS/HTTP link banner.
