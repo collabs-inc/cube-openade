@@ -1,0 +1,25 @@
+{
+  "upstream": "https://github.com/bearlyai/OpenADE",
+  "version": "0.81.2",
+  "revision": "3ce7a832589f7b545f6ccccdb02bc8874ded605b",
+  "platform": "linux-x64",
+  "appImage": {
+    "url": "https://github.com/bearlyai/OpenADE/releases/download/v0.81.2/OpenADE-0.81.2.AppImage",
+    "size": 144305115,
+    "sha256": "619e0b2f2aa2d92f3f3702a76eacf4971b67359f2dd3ba8e9dc259309a0e7ce9"
+  },
+  "managedBinaries": {
+    "bun": {
+      "version": "1.3.8",
+      "url": "https://github.com/bearlyai/crossbins/releases/download/v1/bun-1.3.8-linux-x86_64",
+      "size": 101987064,
+      "sha256": "0bb81ea882bce5946a1fc0d26d61880276d81fe22714714b5a2b792bdff8ea7a"
+    },
+    "rg": {
+      "version": "15.1.0",
+      "url": "https://github.com/bearlyai/crossbins/releases/download/v1/rg-15.1.0-linux-x86_64-musl",
+      "size": 5445512,
+      "sha256": "ebeaf56f8a25e102e9419933423738b3a2a613a444fd749d695e15eba53f71f2"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "OpenADE",
+  "description": "A desktop workspace for Claude Code and Codex, streamed through Cube. Uses this machine's coding CLI installations and sign-ins.",
+  "icon": "projects/landing/public/favicon-192.png",
+  "platforms": ["linux"],
+  "install": "sh cube/install.sh",
+  "start": "node cube/start.mjs"
+}

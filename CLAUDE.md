@@ -9,6 +9,9 @@
 
 ## Project Outline
 
+For the pinned Cube Linux app package, installation, persistent state, and
+verification, read [cube/README.md](cube/README.md) before changing `cube/`.
+
 | Path | What it is | Local guidance |
 | --- | --- | --- |
 | `projects/web` | Desktop renderer/code module for task planning, execution, settings, remote UI sources, and shared web components. | [projects/web/src/CLAUDE.md](projects/web/src/CLAUDE.md), [projects/web/src/remote/CLAUDE.md](projects/web/src/remote/CLAUDE.md) |
